@@ -50,7 +50,6 @@ data "archive_file" "dummy_lambda_package" {
   output_path = "${path.module}/dummy_lambda.zip"
 
   source {
-    # A minimal "hello world" Node.js handler
     content  = "exports.handler = async (event) => { console.log('This is a placeholder function. Real code is deployed by CI/CD.'); };"
     filename = "index.js"
   }

@@ -11,7 +11,7 @@ resource "aws_vpc" "cloud_storage_vpc" {
 resource "aws_subnet" "private_subnet_a" {
   depends_on = [ aws_vpc.cloud_storage_vpc ]
   vpc_id            = aws_vpc.cloud_storage_vpc.id
-  availability_zone = "us-east-1a" # Change to your preferred AZ
+  availability_zone = "us-east-1a" 
   cidr_block        = "10.0.4.0/24"
   tags = {
     Name = "private_subnet_a"
@@ -22,7 +22,7 @@ resource "aws_subnet" "private_subnet_a" {
 resource "aws_subnet" "private_subnet_b" {
   depends_on = [ aws_vpc.cloud_storage_vpc ]
   vpc_id            = aws_vpc.cloud_storage_vpc.id
-  availability_zone = "us-east-1b" # Change to your preferred AZ
+  availability_zone = "us-east-1b" 
   cidr_block        = "10.0.5.0/24"
   tags = {
     Name = "private_subnet_b"
@@ -33,7 +33,7 @@ resource "aws_subnet" "private_subnet_b" {
 resource "aws_subnet" "public_subnet" {
   depends_on = [ aws_vpc.cloud_storage_vpc ]
   vpc_id            = aws_vpc.cloud_storage_vpc.id
-  availability_zone = "us-east-1a" # Change to your preferred AZ
+  availability_zone = "us-east-1a" 
   cidr_block        = "10.0.6.0/24"
   map_public_ip_on_launch = true
     tags = {
