@@ -45,9 +45,9 @@ resource "aws_iam_role_policy_attachment" "add_s3_lambda_policy_attachment" {
   policy_arn = aws_iam_policy.add_s3_lambda_policy.arn
 }
 
-data "archive_file" "dummy_lambda_package" {
+data "archive_file" "dummy_lambda_package_put" {
   type        = "zip"
-  output_path = "${path.module}/dummy_lambda.zip"
+  output_path = "${path.module}/dummy_lambda_put.zip"
 
   source {
     content  = "exports.handler = async (event) => { console.log('This is a placeholder function. Real code is deployed by CI/CD.'); };"
@@ -61,8 +61,8 @@ resource "aws_lambda_function" "put_s3_object" {
   handler       = "index.handler"
   runtime       = "nodejs18.x"
   
-  filename         = data.archive_file.dummy_lambda_package.output_path
-  source_code_hash = data.archive_file.dummy_lambda_package.output_base64sha256
+  filename         = data.archive_file.dummy_lambda_package_put.output_path
+  source_code_hash = data.archive_file.dummy_lambda_package_put.output_base64sha256
 
   environment {
     variables = {

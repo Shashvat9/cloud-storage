@@ -3,14 +3,17 @@ resource "aws_security_group" "db_security_group" {
   description = "Security group for Cloud Storage database"
   vpc_id      = aws_vpc.cloud_storage_vpc.id
 
-  ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = [aws_subnet.private_subnet_a.cidr_block, aws_subnet.private_subnet_b.cidr_block, aws_subnet.public_subnet.cidr_block]
-    # security_groups = [aws_security_group.get_lambda_sg.id, aws_security_group.put_lambda_sg.id]
-    description = "Allow MySQL access from private subnets"
-  }
+  # ingress {
+  #   from_port   = 3306
+  #   to_port     = 3306
+  #   protocol    = "tcp"
+  #   # cidr_blocks = [aws_subnet.private_subnet_a.cidr_block, aws_subnet.private_subnet_b.cidr_block, aws_subnet.public_subnet.cidr_block]
+  #   security_groups = [
+  #     aws_security_group.get_lambda_sg.id, 
+  #     aws_security_group.put_lambda_sg.id, 
+  #     aws_security_group.encrypt_lambda_sg.id]
+  #   description = "Allow MySQL access from private subnets"
+  # }
     egress {
         from_port   = 0
         to_port     = 0
@@ -22,6 +25,36 @@ resource "aws_security_group" "db_security_group" {
         Name        = "Cloud Storage DB Security Group"
         Environment = "Production"
     }
+}
+
+resource "aws_security_group_rule" "db_ingress_from_get_lambda" {
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.db_security_group.id
+  source_security_group_id = aws_security_group.get_lambda_sg.id 
+  description              = "Allow MySQL access from Get Lambda"
+}
+
+resource "aws_security_group_rule" "db_ingress_from_put_lambda" {
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.db_security_group.id
+  source_security_group_id = aws_security_group.put_lambda_sg.id 
+  description              = "Allow MySQL access from Put Lambda"
+}
+
+resource "aws_security_group_rule" "db_ingress_from_encrypt_lambda" {
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.db_security_group.id
+  source_security_group_id = aws_security_group.encrypt_lambda_sg.id 
+  description              = "Allow MySQL access from Encrypt Lambda"
 }
 
 resource "aws_security_group" "put_lambda_sg" {
@@ -66,4 +99,23 @@ resource "aws_security_group" "get_lambda_sg" {
     security_groups = [aws_security_group.db_security_group.id]
     description = "Allow outbound MySQL traffic to DB security group"
   } 
+}
+
+resource "aws_security_group" "encrypt_lambda_sg" { 
+  name        = "encrypt_lambda_sg"
+  description = "Security group for Lambda function to access RDS"
+  vpc_id      = aws_vpc.cloud_storage_vpc.id
+
+  egress {
+    from_port = 3306
+    to_port   = 3306
+    protocol  = "tcp"
+    security_groups = [aws_security_group.db_security_group.id]
+    description = "Allow outbound MySQL traffic"
+  }
+
+  tags = {
+    Name        = "Encryption Lambda Security Group"
+    Environment = "Production"
+  }
 }
