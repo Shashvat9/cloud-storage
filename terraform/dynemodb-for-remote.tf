@@ -12,4 +12,8 @@ resource "aws_dynamodb_table" "Lock-table" {
     Name = "lock-table"
   }
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
 }

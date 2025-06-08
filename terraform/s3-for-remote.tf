@@ -3,4 +3,7 @@ resource aws_s3_bucket bucket {
     tags = {
       Name = "remote s3"
     }
+    lifecycle {
+    prevent_destroy = true
+  }
 }

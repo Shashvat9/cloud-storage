@@ -119,3 +119,21 @@ resource "aws_security_group" "encrypt_lambda_sg" {
     Environment = "Production"
   }
 }
+resource "aws_security_group" "encode_lambda_sg" { 
+  name        = "encode_lambda_sg"
+  description = "Security group for Lambda function to access RDS"
+  vpc_id      = aws_vpc.cloud_storage_vpc.id
+
+  egress {
+    from_port = 3306
+    to_port   = 3306
+    protocol  = "tcp"
+    security_groups = [aws_security_group.db_security_group.id]
+    description = "Allow outbound MySQL traffic"
+  }
+
+  tags = {
+    Name        = "Encryption Lambda Security Group"
+    Environment = "Production"
+  }
+}
