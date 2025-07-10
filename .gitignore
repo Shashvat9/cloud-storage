@@ -1,5 +1,5 @@
 ./terraform/security_var.tf
-./terraform/provider.tfstate
+./terraform/provider.tf
 
 # Local Terraform state files
 *.tfstate
